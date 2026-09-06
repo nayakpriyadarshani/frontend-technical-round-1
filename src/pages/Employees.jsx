@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Employees.css";
 
 const employees = [
@@ -43,6 +43,15 @@ const employees = [
 function Employees() {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredEmployees = employees.filter(
     (employee) =>
@@ -86,7 +95,19 @@ function Employees() {
         </select>
       </div>
 
-      {filteredEmployees.length === 0 ? (
+      {loading ? (
+        <div className="employee-grid">
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <div className="employee-card skeleton-card" key={item}>
+              <div className="skeleton skeleton-avatar"></div>
+              <div className="skeleton skeleton-name"></div>
+              <div className="skeleton skeleton-department"></div>
+              <div className="skeleton skeleton-position"></div>
+              <div className="skeleton skeleton-email"></div>
+            </div>
+          ))}
+        </div>
+      ) : filteredEmployees.length === 0 ? (
         <div className="empty-state">
           <h3>No employees found</h3>
           <p>Try changing your search or department filter.</p>
@@ -100,6 +121,7 @@ function Employees() {
               </div>
 
               <h3>{employee.name}</h3>
+
               <span className="department-badge">
                 {employee.department}
               </span>
